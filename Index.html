@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>COMPANY SALES VISIT</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+
+font-family:'Montserrat',sans-serif;
+
+background:
+linear-gradient(rgba(8,28,20,0.92),rgba(8,28,20,0.96)),
+url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200');
+
+background-size:cover;
+background-position:center;
+
+min-height:100vh;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+padding:20px;
+
+color:white;
+
+}
+
+.box{
+
+width:100%;
+max-width:430px;
+
+background:rgba(255,255,255,0.05);
+
+border:1px solid rgba(255,255,255,0.1);
+
+border-radius:30px;
+
+padding:45px 28px;
+
+backdrop-filter:blur(10px);
+
+box-shadow:0 10px 40px rgba(0,0,0,0.3);
+
+}
+
+.logo{
+
+text-align:center;
+
+margin-bottom:50px;
+
+}
+
+.logo h1{
+
+font-size:56px;
+
+font-weight:300;
+
+letter-spacing:6px;
+
+color:#D8BE84;
+
+}
+
+.logo span{
+
+font-size:24px;
+
+letter-spacing:10px;
+
+}
+
+.title{
+
+text-align:center;
+
+margin-bottom:35px;
+
+}
+
+.title h2{
+
+font-size:32px;
+
+color:#D8BE84;
+
+font-weight:600;
+
+}
+
+button{
+
+width:100%;
+
+padding:22px;
+
+border:none;
+
+border-radius:20px;
+
+background:linear-gradient(135deg,#D6B677,#E9D5A3);
+
+font-size:22px;
+
+font-weight:700;
+
+color:#173321;
+
+cursor:pointer;
+
+margin-bottom:35px;
+
+}
+
+.info{
+
+background:rgba(255,255,255,0.03);
+
+border-radius:24px;
+
+padding:10px 24px;
+
+}
+
+.row{
+
+display:flex;
+
+justify-content:space-between;
+
+padding:18px 0;
+
+border-bottom:1px solid rgba(255,255,255,0.08);
+
+gap:10px;
+
+}
+
+.row:last-child{
+
+border-bottom:none;
+
+}
+
+.label{
+
+color:#D8BE84;
+
+}
+
+.value{
+
+text-align:right;
+
+word-break:break-word;
+
+}
+
+#status{
+
+margin-top:20px;
+
+text-align:center;
+
+font-size:14px;
+
+line-height:1.6;
+
+color:#d8d8d8;
+
+}
+
+.warning{
+
+margin-top:15px;
+
+text-align:center;
+
+font-size:13px;
+
+line-height:1.6;
+
+color:#D8BE84;
+
+}
+
+.chrome{
+
+margin-top:18px;
+
+text-align:center;
+
+}
+
+.chrome a{
+
+display:inline-block;
+
+padding:12px 20px;
+
+background:white;
+
+color:#173321;
+
+text-decoration:none;
+
+border-radius:14px;
+
+font-weight:700;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<div class="logo">
+
+<h1>MORA <span>GROUP</span></h1>
+
+</div>
+
+<div class="title">
+
+<h2>COMPANY SALES VISIT</h2>
+
+</div>
+
+<button onclick="startCheckin()">
+
+CHECK IN VISIT
+
+</button>
+
+<div class="info">
+
+<div class="row">
+
+<div class="label">Timestamp</div>
+
+<div class="value" id="timestamp">-</div>
+
+</div>
+
+<div class="row">
+
+<div class="label">GPS Accuracy</div>
+
+<div class="value" id="gps">Waiting...</div>
+
+</div>
+
+<div class="row">
+
+<div class="label">Coordinate</div>
+
+<div class="value" id="coordinate">-</div>
+
+</div>
+
+</div>
+
+<div id="status">
+
+Ready for check in visit
+
+</div>
+
+<div class="warning">
+
+Gunakan Google Chrome dan aktifkan GPS
+
+</div>
+
+<div class="chrome">
+
+<a href="#" onclick="openChrome();return false;">
+
+BUKA DI CHROME
+
+</a>
+
+</div>
+
+</div>
+
+<script>
+
+// UPDATE TIME
+function updateClock(){
+
+document.getElementById("timestamp").innerHTML =
+new Date().toLocaleString('id-ID');
+
+}
+
+updateClock();
+
+setInterval(updateClock,1000);
+
+
+// OPEN CHROME
+function openChrome(){
+
+const ua = navigator.userAgent;
+
+if(/Android/i.test(ua)){
+
+const url = window.location.href;
+
+const intent =
+"intent://" +
+url.replace(/^https?:\/\//,'') +
+"#Intent;scheme=https;package=com.android.chrome;end";
+
+window.location.href = intent;
+
+}
+else{
+
+alert(
+"Silakan buka halaman ini menggunakan Google Chrome"
+);
+
+}
+
+}
+
+
+// START CHECKIN
+function startCheckin(){
+
+document.getElementById("status").innerHTML =
+"Mengambil lokasi GPS...";
+
+
+// SUPPORT CHECK
+if(!navigator.geolocation){
+
+showError(
+"Browser tidak mendukung GPS"
+);
+
+return;
+
+}
+
+
+// FIRST REQUEST
+navigator.geolocation.getCurrentPosition(
+
+successLocation,
+
+retryLocation,
+
+{
+
+enableHighAccuracy:false,
+timeout:20000,
+maximumAge:60000
+
+}
+
+);
+
+}
+
+
+// RETRY
+function retryLocation(){
+
+document.getElementById("status").innerHTML =
+"Mencoba ulang GPS...";
+
+navigator.geolocation.getCurrentPosition(
+
+successLocation,
+
+function(){
+
+showError(
+"GPS gagal diakses"
+);
+
+},
+
+{
+
+enableHighAccuracy:false,
+timeout:30000,
+maximumAge:120000
+
+}
+
+);
+
+}
+
+
+// SUCCESS
+function successLocation(position){
+
+const lat =
+position.coords.latitude;
+
+const lng =
+position.coords.longitude;
+
+const accuracy =
+position.coords.accuracy;
+
+
+// SHOW
+document.getElementById("gps").innerHTML =
+accuracy.toFixed(0) + " meter";
+
+document.getElementById("coordinate").innerHTML =
+lat.toFixed(6) + ", " + lng.toFixed(6);
+
+document.getElementById("status").innerHTML =
+"Lokasi berhasil diambil";
+
+
+// TIMESTAMP
+const timestamp =
+new Date().toLocaleString('id-ID');
+
+
+// MAP
+const maps =
+"https://maps.google.com/?q=" +
+lat + "," + lng;
+
+
+// FORM URL
+const formUrl =
+"https://docs.google.com/forms/d/e/1FAIpQLSfCYT4sUdB1Zs4OSlZ5lxl0rO_QFLTQ4slNvVtE2vJuQ1I9sw/viewform?usp=pp_url"
++ "&entry.244110747=" + encodeURIComponent(lat)
++ "&entry.1918323340=" + encodeURIComponent(lng)
++ "&entry.2101569230=" + encodeURIComponent(maps)
++ "&entry.123456789=" + encodeURIComponent(timestamp);
+
+
+// REDIRECT
+setTimeout(function(){
+
+window.location.href = formUrl;
+
+},1000);
+
+}
+
+
+// ERROR
+function showError(message){
+
+document.getElementById("status").innerHTML =
+message;
+
+alert(
+message +
+"\n\nPastikan:\n- GPS aktif\n- Permission lokasi browser diizinkan\n- Gunakan Google Chrome\n- Website HTTPS"
+);
+
+}
+
+</script>
+
+</body>
+
+</html>
